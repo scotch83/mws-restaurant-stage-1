@@ -205,11 +205,11 @@ nav h1 a {
 }
 .inside #map-container {
   background: blue none repeat scroll 0 0;
-  height: calc(100% - 80px);
   position: fixed;
   right: 0;
-  top: 80px;
-  width: 50%;
+  top: 131px;
+  height: 120px;
+  width: 100%;
 }
 .inside #map {
   background-color: #ccc;
