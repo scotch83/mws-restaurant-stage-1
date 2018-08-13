@@ -40,6 +40,8 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
   min-height: 100%;
 }
 #footer {
+  position: fixed;
+  bottom: 0;
   background-color: #252831;
   color: #aaa;
   font-size: 8pt;
@@ -47,6 +49,7 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
   padding: 25px;
   text-align: center;
   text-transform: uppercase;
+  width: calc(100% - 50px);
 }
 /* ====================== Navigation ====================== */
 nav {
@@ -215,11 +218,6 @@ nav h1 a {
   background-color: #ccc;
   height: 100%;
   width: 100%;
-}
-.inside #footer {
-  bottom: 0;
-  position: absolute;
-  width: calc(50% - 50px);
 }
 #restaurant-name {
   color: #f18200;
