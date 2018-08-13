@@ -232,7 +232,8 @@ nav h1 a {
   line-height: 1.1;
 }
 #restaurant-img {
-	width: 90%;
+  padding: 20px;
+	width: calc(100% - 40px);
 }
 #restaurant-address {
   font-size: 12pt;
