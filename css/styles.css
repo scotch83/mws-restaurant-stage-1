@@ -289,7 +289,20 @@ nav h1 a {
   color: #666;
 }
 @media only screen and (min-width: 550px) {
-  #breadcrumb {
+  #breadcrumb,
+  #restaurant-container,
+  #reviews-container {
     width: calc(50% - 80px);
+  }
+  #restaurant-container {
+    padding-top: 131px;
+  }
+  .inside header {
+    z-index: unset;
+  }
+  .inside #map-container {
+    width: 50%;
+    top: 80px;
+    height: calc(100% - 145px);
   }
 }
