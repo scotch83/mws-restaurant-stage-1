@@ -1,3 +1,36 @@
+function trackWorkerChange(registeredWorker) {
+  registeredWorker.addEventListener('statechange', function () {
+    if (registeredWorker.state === 'installed') {
+      notifiyUpdate(registeredWorker);
+    }
+  })
+}
+
+function notifiyUpdate(serviceWorker) {
+  showMessage("There is an update.\nDo you want to refresh now?", "Refresh", "Dismiss", function (onRefresh, target) {
+    if (onRefresh)
+      serviceWorker.postMessage({ action: 'skipWaiting' });
+    else target.className = 'hidden-toast';
+  })
+}
+function showMessage(text, yesText, noText, cb) {
+  const container = document.createElement('div');
+  container.className = "toast";
+
+  const messageContainer = document.createElement('div');
+  messageContainer.innerText = text;
+  messageContainer.className = "toast-message";
+
+  const yesButton = document.createElement('button');
+  const noButton = document.createElement('button');
+  yesButton.addEventListener('click', (event) => cb(true, container));
+  noButton.addEventListener('click', (event) => cb(false, container));
+  yesButton.innerText = yesText;
+  noButton.innerText = noText;
+  container.append(messageContainer, yesButton, noButton);
+  const body = document.querySelector('body');
+  body.appendChild(container);
+}
 /**
  * Common database helper functions.
  */
@@ -16,19 +49,17 @@ class DBHelper {
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', DBHelper.DATABASE_URL);
-    xhr.onload = () => {
-      if (xhr.status === 200) { // Got a success response from server!
-        const json = JSON.parse(xhr.responseText);
+    fetch(DBHelper.DATABASE_URL)
+      .then(res => res.json())
+      .then(json => {
+
         const restaurants = json.restaurants;
-        callback(null, restaurants);
-      } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
+        callback(null, restaurants)
+      })
+      .catch(err => {
+        const error = (`Request failed. Returned status of ${err.status}`);
         callback(error, null);
-      }
-    };
-    xhr.send();
+      });
   }
 
   /**
@@ -179,3 +210,31 @@ class DBHelper {
 
 }
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js').then(registeredWorker => {
+    console.log('Service worker succesfully registered');
+    if (!navigator.serviceWorker.controller) return;
+
+    if (registeredWorker.installing) {
+      trackWorkerChange(registeredWorker.installing);
+    }
+
+    if (registeredWorker.waiting) {
+      notifiyUpdate(registeredWorker.waiting);
+    }
+
+    registeredWorker.addEventListener('updatefound', function () {
+      trackWorkerChange(registeredWorker.installing);
+    })
+  })
+    .catch(err => {
+      console.log(`Something went wrong ${err}`);
+    });
+
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', function () {
+    if (refreshing) return;
+    window.location.reload();
+    refreshing = true;
+  })
+}
