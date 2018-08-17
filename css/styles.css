@@ -306,3 +306,40 @@ nav h1 a {
     height: calc(100% - 145px);
   }
 }
+
+/* ====================== Toast message ====================== */
+.toast {
+  padding : 10px;
+  background-color : #3397dbcc;
+  color : #fff;
+  position : fixed;
+  width: calc(100% - 30px);
+  border-radius: 15px;
+  margin: 5px;
+  bottom: 10px;
+  text-transform : uppercase;
+  letter-spacing : 5px;
+  font-weight: bold;
+  text-align: center;
+  font-size: 12pt;
+}
+.toast button {
+  margin: 10px;
+  padding: 20px;
+  width: calc(50% - 60px);
+  background: transparent;
+  border: #ffffff66 solid 5px;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  letter-spacing: 2px;
+  font-size: 12pt;
+}
+.toast-message {
+  margin:20px;
+  width: calc(100% - 40px);
+}
+
+.hidden-toast{
+  display: none;
+}
