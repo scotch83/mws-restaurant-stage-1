@@ -1,14 +1,14 @@
 'use strict';
 
-const cacheVersion = 'v2'
+const cacheVersion = 'v1'
 const staticCacheName = `resto-rev-cache-${cacheVersion}`;
 const imagesCache = `resto-rev-cache-images-${cacheVersion}`;
 const toBeCached = [
   '/', '/restaurant.html',
-  //'/css/styles.css',
+  '/css/styles.css',
   '/js/main.js',
   '/js/restaurant_info.js',
-  //'/js/dbhelper.js',
+  '/js/dbhelper.js',
   '/leaflet/images/marker-icon.png', '/leaflet/images/marker-icon-2x.png',
   '/leaflet/images/layers-2x.png', '/leaflet/images/layers.png',
   '/leaflet/images/marker-shadow.png', '/leaflet/leaflet-src.esm.js',
