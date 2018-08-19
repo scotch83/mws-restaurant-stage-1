@@ -22,7 +22,7 @@ self.addEventListener('fetch', (event) => {
       event.respondWith(serveFromCache('/restaurant.html'));
       return;
     }
-    if (requestUrl.pathname.match(/^\/img\/|^\/leaflet\/images\//)) {
+    if (requestUrl.pathname.match(/(.*)(\/)(.*)\.(jpg|png|gif)$/)) {
       event.respondWith(serveImg(event.request));
       return;
     }
@@ -38,7 +38,7 @@ function serveFromCache(key) {
   return caches.open(staticCacheName).then(cache => cache.match(key));
 }
 function serveImg(request) {
-  var key = request.url.replace(/\.jpg$/, '');
+  let key = request.url.replace(/(.*)(\/)(.*)\.(jpg|png|gif)$/, '$3');
   return caches.open(imagesCache).then(cache => {
     return cache.match(key)
         .then(res => {
