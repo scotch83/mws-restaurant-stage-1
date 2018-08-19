@@ -34,10 +34,10 @@ self.addEventListener('fetch', (event) => {
       return res || fetch(event.request);
     }));
 });
-serveFromCache = (key) => {
+function serveFromCache(key) {
   return caches.open(staticCacheName).then(cache => cache.match(key));
 }
-serveImg = (request) => {
+function serveImg(request) {
   var key = request.url.replace(/\.jpg$/, '');
   return caches.open(imagesCache).then(cache => {
     return cache.match(key)
