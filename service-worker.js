@@ -1,49 +1,57 @@
 'use strict';
 
-const cacheVersion = 'v1'
+const cacheVersion = 'v1';
 const staticCacheName = `resto-rev-cache-${cacheVersion}`;
 const imagesCache = `resto-rev-cache-images-${cacheVersion}`;
 const toBeCached = [
   '/', '/restaurant.html',
-  '/css/styles.css',
-  '/js/main.js',
-  '/js/restaurant_info.js',
-  '/js/dbhelper.js',
-  '/leaflet/images/marker-icon.png', '/leaflet/images/marker-icon-2x.png',
-  '/leaflet/images/layers-2x.png', '/leaflet/images/layers.png',
-  '/leaflet/images/marker-shadow.png', '/leaflet/leaflet-src.esm.js',
-  '/leaflet/leaflet-src.esm.js.map', '/leaflet/leaflet-src.js',
-  '/leaflet/leaflet-src.js.map', '/leaflet/leaflet.css', '/leaflet/leaflet.js',
-  '/leaflet/leaflet.js.map', '/data/restaurants.json'
-];
-
+  'data/restaurants.json',
+  'css/styles.css',
+  'js/main.js',
+  'js/restaurant_info.js',
+  'js/dbhelper.js',
+  'js/service-worker-loader.js',
+  'leaflet/leaflet.css',
+  'leaflet/leaflet.js'
+];;
 self.addEventListener('fetch', (event) => {
-  //add
   const requestUrl = new URL(event.request.url);
-  console.log(requestUrl);
-  if (requestUrl.origin === location.origin) {
+  if(requestUrl.origin === location.origin)
+  {
     if (requestUrl.pathname.startsWith('/restaurant.html')) {
-      event.respondWith(caches.match('/restaurant.html'))
+      event.respondWith(serveFromCache('/restaurant.html'));
       return;
     }
-    if (requestUrl.pathname.startsWith('/img/')) {
-      event.respondWith(caches.open(imagesCache).then(cache => {
-        return cache.match(event.request)
-            .then(res => {
-              return res || fetch(event.request).then(res => {
-                cache.put(event.request, res.clone())
-                return res;
-              });
-            })
-            .catch(err => console.log(err));
-      }));
+    if (requestUrl.pathname.match(/^\/img\/|^\/leaflet\/images\//)) {
+      event.respondWith(serveImg(event.request));
       return;
     }
+    event.respondWith(serveFromCache(requestUrl.pathname));
+    return;
   }
   event.respondWith(
-      caches.match(event.request).then(res => res || fetch(event.request)));
+    caches.match(event.request).then(res => {
+      return res || fetch(event.request);
+    }));
 });
-
+serveFromCache = (key) => {
+  return caches.open(staticCacheName).then(cache => cache.match(key));
+}
+serveImg = (request) => {
+  var key = request.url.replace(/\.jpg$/, '');
+  return caches.open(imagesCache).then(cache => {
+    return cache.match(key)
+        .then(res => {
+          return res ||
+            fetch(request).then(res => {
+            cache.put(key, res.clone())
+            return res;
+          })
+          .catch((err) => console.log(err));
+        })
+        .catch(err => console.log(err));
+  });
+}
 self.addEventListener('install', function(e) {
   e.waitUntil(
       caches.open(staticCacheName).then(cache => cache.addAll(toBeCached)));
