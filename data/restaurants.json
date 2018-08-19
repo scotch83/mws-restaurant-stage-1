@@ -10,6 +10,7 @@
       "lng": -73.989667
     },
     "cuisine_type": "Asian",
+    "altDescription": "Dining room, interior",
     "operating_hours": {
       "Monday": "5:30 pm - 11:00 pm",
       "Tuesday": "5:30 pm - 12:00 am",
@@ -41,6 +42,7 @@
   }, {
     "id": 2,
     "name": "Emily",
+    "altDescription": "Pizza pie",
     "neighborhood": "Brooklyn",
     "photograph": "2.jpg",
     "address": "919 Fulton St, Brooklyn, NY 11238",
@@ -82,6 +84,7 @@
     "name": "Kang Ho Dong Baekjeong",
     "neighborhood": "Manhattan",
     "photograph": "3.jpg",
+    "altDescription": "Dining room - interior",
     "address": "1 E 32nd St, New York, NY 10016",
     "latlng": {
       "lat": 40.747143,
@@ -119,6 +122,7 @@
   }, {
     "id": 4,
     "name": "Katz's Delicatessen",
+    "altDescription": "Outside view - street corner",
     "neighborhood": "Manhattan",
     "photograph": "4.jpg",
     "address": "205 E Houston St, New York, NY 10002",
@@ -158,6 +162,7 @@
   }, {
     "id": 5,
     "name": "Roberta's Pizza",
+    "altDescription": "Dining room and oven, interior.",
     "neighborhood": "Brooklyn",
     "photograph": "5.jpg",
     "address": "261 Moore St, Brooklyn, NY 11206",
@@ -197,6 +202,7 @@
   }, {
     "id": 6,
     "name": "Hometown BBQ",
+    "altDescription": "Dining room - interior",
     "neighborhood": "Brooklyn",
     "photograph": "6.jpg",
     "address": "454 Van Brunt St, Brooklyn, NY 11231",
@@ -236,6 +242,7 @@
   }, {
     "id": 7,
     "name": "Superiority Burger",
+    "altDescription": "Outside view, store front",
     "neighborhood": "Manhattan",
     "photograph": "7.jpg",
     "address": "430 E 9th St, New York, NY 10009",
@@ -275,6 +282,7 @@
   }, {
     "id": 8,
     "name": "The Dutch",
+    "altDescription": "Outside view, store front",
     "neighborhood": "Manhattan",
     "photograph": "8.jpg",
     "address": "131 Sullivan St, New York, NY 10012",
@@ -314,6 +322,7 @@
   }, {
     "id": 9,
     "name": "Mu Ramen",
+    "altDescription": "Dining room - interior",
     "neighborhood": "Queens",
     "photograph": "9.jpg",
     "address": "1209 Jackson Ave, Queens, NY 11101",
@@ -353,6 +362,7 @@
   }, {
     "id": 10,
     "name": "Casa Enrique",
+    "altDescription": "Dining room - interior",
     "neighborhood": "Queens",
     "photograph": "10.jpg",
     "address": "5-48 49th Ave, Queens, NY 11101",

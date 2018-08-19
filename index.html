@@ -20,16 +20,13 @@
     <header>
       <nav>
         <h1>
-          <a href="/">Restaurant Reviews</a>
+          <a href="/" aria-label="Restaurant Reviews Homepage">Restaurant Reviews</a>
         </h1>
       </nav>
     </header>
 
     <main id="maincontent">
-      <section id="map-container">
-        <div id="map"></div>
-      </section>
-      <section>
+      <section class="two">
         <div class="filter-options">
           <h2>Filter Results</h2>
           <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()">
@@ -40,6 +37,9 @@
           </select>
         </div>
         <ul id="restaurants-list"></ul>
+      </section>
+      <section id="map-container" class="one">
+        <div id="map"></div>
       </section>
     </main>
     <script src="leaflet/leaflet.js"></script>
