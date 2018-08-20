@@ -161,7 +161,7 @@ createRestaurantHTML = (restaurant) => {
   const image = document.createElement('img');
   image.className = 'restaurant-img';
   li.tabIndex = 0;
-  image.alt = "";
+  image.alt = `${restaurant.altDescription}`;
   image.src = `/img/ld/${restaurant.photograph}`;
   image.srcset = `/img/ld/${restaurant.photograph} 1x, /img/hd/${restaurant.photograph} 2x`;
   li.append(image);

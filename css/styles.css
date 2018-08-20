@@ -54,11 +54,11 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
 /* ====================== Navigation ====================== */
 nav {
   width: 100%;
+}
+nav h1 {
   height: 80px;
   background-color: #252831;
   text-align:center;
-}
-nav h1 {
   margin: auto;
 }
 nav h1 a {
