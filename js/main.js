@@ -162,8 +162,8 @@ createRestaurantHTML = (restaurant) => {
   image.className = 'restaurant-img';
   li.tabIndex = 0;
   image.alt = `${restaurant.altDescription}`;
-  image.src = `/img/ld/${restaurant.photograph}`;
-  image.srcset = `/img/ld/${restaurant.photograph} 1x, /img/hd/${restaurant.photograph} 2x`;
+  image.src = `/img/ld/${restaurant.photograph}.jpg`;
+  image.srcset = `/img/ld/${restaurant.photograph}.jpg 1x, /img/hd/${restaurant.photograph}.jpg 2x`;
   li.append(image);
 
   const name = document.createElement('h1');
