@@ -1,6 +1,6 @@
 'use strict';
 
-const cacheVersion = 'v1';
+const cacheVersion = 'v2';
 const staticCacheName = `resto-rev-cache-${cacheVersion}`;
 const imagesCache = `resto-rev-cache-images-${cacheVersion}`;
 const toBeCached = [
