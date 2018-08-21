@@ -35,7 +35,12 @@ self.addEventListener('fetch', (event) => {
     }));
 });
 function serveFromCache(key) {
-  return caches.open(staticCacheName).then(cache => cache.match(key));
+  return caches.open(staticCacheName).then(cache => {
+    return cache.match(key).then(res => res || fetch(key).then(fetched => {
+      cache.put(key, fetched.clone());
+      return fetched;
+    }));
+  });
 }
 function serveImg(request) {
   let key = request.url.replace(/(.*)(\/)(.*)\.(jpg|png|gif)$/, '$3');
