@@ -16,17 +16,29 @@ class DBHelper {
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
+    const dbPromise = _dbPromise;
     fetch(DBHelper.DATABASE_URL)
       .then(response => response.json())
       .then(json => {
         json.map(restaurant => {
           if(restaurant.photograph) restaurant.photograph = `${restaurant.photograph}.jpg`;
+        });
+        dbPromise.then(db => {
+          if(!db) return;
+          const transaction = db.transaction("restaurants", "readwrite");
+          const store = transaction.objectStore("restaurants");
+          json.map(item => store.put(item));
         })
-        callback(null, json)
+        callback(null, json);
       })
       .catch(err => {
-        const error = (`Request failed. Returned status of ${err.status}`, err);
-        callback(error, null);
+        console.error(`Request failed. Returned status of ${err.status}`);
+        dbPromise.then(db => {
+          if(!db) return;
+          const transaction = db.transaction("restaurants", "readwrite");
+          const store = transaction.objectStore("restaurants");
+          store.getAll().then(dbData =>callback(null, dbData));
+        })
       });
   }
 
@@ -149,7 +161,7 @@ class DBHelper {
    * Map marker for a restaurant.
    */
    static mapMarkerForRestaurant(restaurant, map) {
-    // https://leafletjs.com/reference-1.3.0.html#marker  
+    // https://leafletjs.com/reference-1.3.0.html#marker
     const marker = new L.marker([restaurant.latlng.lat, restaurant.latlng.lng],
       {title: restaurant.name,
       alt: restaurant.name,
@@ -157,7 +169,7 @@ class DBHelper {
       })
       marker.addTo(newMap);
     return marker;
-  } 
+  }
   /* static mapMarkerForRestaurant(restaurant, map) {
     const marker = new google.maps.Marker({
       position: restaurant.latlng,

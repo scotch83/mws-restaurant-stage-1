@@ -1,11 +1,10 @@
 'use strict';
 
-const cacheVersion = 'v2';
+const cacheVersion = 'v3';
 const staticCacheName = `resto-rev-cache-${cacheVersion}`;
 const imagesCache = `resto-rev-cache-images-${cacheVersion}`;
 const toBeCached = [
   '/', '/restaurant.html',
-  'data/restaurants.json',
   'css/styles.css',
   'js/main.js',
   'js/restaurant_info.js',
@@ -13,7 +12,7 @@ const toBeCached = [
   'js/service-worker-loader.js',
   'leaflet/leaflet.css',
   'leaflet/leaflet.js'
-];;
+];
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
   if(requestUrl.origin === location.origin)
@@ -35,26 +34,31 @@ self.addEventListener('fetch', (event) => {
     }));
 });
 function serveFromCache(key) {
-  return caches.open(staticCacheName).then(cache => cache.match(key));
+  return caches.open(staticCacheName).then(cache => {
+    return cache.match(key).then(res => res || fetch(key).then(fetched => {
+      cache.put(key, fetched.clone());
+      return fetched;
+    }));
+  });
 }
 function serveImg(request) {
   let key = request.url.replace(/(.*)(\/)(.*)\.(jpg|png|gif)$/, '$3');
   return caches.open(imagesCache).then(cache => {
     return cache.match(key)
-        .then(res => {
-          return res ||
-            fetch(request).then(res => {
-            cache.put(key, res.clone())
+      .then(res => {
+        return res ||
+          fetch(request).then(res => {
+            cache.put(key, res.clone());
             return res;
           })
-          .catch((err) => console.log(err));
-        })
-        .catch(err => console.log(err));
+            .catch((err) => console.log(err));
+      })
+      .catch(err => console.log(err));
   });
 }
 self.addEventListener('install', function(e) {
   e.waitUntil(
-      caches.open(staticCacheName).then(cache => cache.addAll(toBeCached)));
+    caches.open(staticCacheName).then(cache => cache.addAll(toBeCached)));
 });
 
 self.addEventListener('message', function(event) {
@@ -67,6 +71,6 @@ self.addEventListener('activate', function (event) {
     .then(cachesKeys =>
       Promise.all(cachesKeys.filter((name) => name.startsWith('resto-') && !name.endsWith(cacheVersion))
         .map(nameToDelete => caches.delete(nameToDelete)))
-  ));
+    ));
 
 });
