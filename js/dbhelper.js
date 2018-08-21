@@ -21,6 +21,12 @@ class DBHelper {
       .then(json => {
         json.map(restaurant => {
           if(restaurant.photograph) restaurant.photograph = `${restaurant.photograph}.jpg`;
+        });
+        _dbPromise.then(db => {
+          if(!db) return;
+          const transaction = db.transaction("restaurants", "readwrite");
+          const store = transaction.objectStore("restaurants");
+          json.map(item => store.put(item));
         })
         callback(null, json)
       })
