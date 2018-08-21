@@ -1,0 +1,30 @@
+{
+  "background_color": "#fdfdfd",
+  "theme_color": "#252831",
+  "description": "An app to read reviews about restaurants",
+  "dir": "ltr",
+  "lang": "en",
+  "short_name": "resto reviews",
+  "name": "Restaurant reviews",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "start_url": ".",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "img/icons/resto_reviews-144.png",
+      "type": "image/png",
+      "sizes": "144x144"
+    },
+    {
+      "src": "img/icons/resto_reviews-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "img/icons/resto_reviews-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
