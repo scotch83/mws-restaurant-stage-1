@@ -1,11 +1,10 @@
 'use strict';
 
-const cacheVersion = 'v2';
+const cacheVersion = 'v3';
 const staticCacheName = `resto-rev-cache-${cacheVersion}`;
 const imagesCache = `resto-rev-cache-images-${cacheVersion}`;
 const toBeCached = [
   '/', '/restaurant.html',
-  'data/restaurants.json',
   'css/styles.css',
   'js/main.js',
   'js/restaurant_info.js',

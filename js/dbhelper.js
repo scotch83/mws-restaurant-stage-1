@@ -16,13 +16,14 @@ class DBHelper {
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
+    const dbPromise = _dbPromise;
     fetch(DBHelper.DATABASE_URL)
       .then(response => response.json())
       .then(json => {
         json.map(restaurant => {
           if(restaurant.photograph) restaurant.photograph = `${restaurant.photograph}.jpg`;
         });
-        _dbPromise.then(db => {
+        dbPromise.then(db => {
           if(!db) return;
           const transaction = db.transaction("restaurants", "readwrite");
           const store = transaction.objectStore("restaurants");
@@ -31,8 +32,13 @@ class DBHelper {
         callback(null, json);
       })
       .catch(err => {
-        const error = (`Request failed. Returned status of ${err.status}`, err);
-        callback(error, null);
+        console.error(`Request failed. Returned status of ${err.status}`);
+        dbPromise.then(db => {
+          if(!db) return;
+          const transaction = db.transaction("restaurants", "readwrite");
+          const store = transaction.objectStore("restaurants");
+          store.getAll().then(dbData =>callback(null, dbData));
+        })
       });
   }
 
