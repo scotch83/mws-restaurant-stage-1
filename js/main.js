@@ -157,32 +157,37 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
  */
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
-
-  const image = document.createElement('img');
-  image.className = 'restaurant-img';
   li.tabIndex = 0;
-  image.alt = `${restaurant.altDescription}`;
-  image.src = `/img/ld/${restaurant.photograph}`;
-  image.srcset = `/img/ld/${restaurant.photograph} 1x, /img/hd/${restaurant.photograph} 2x`;
-  li.append(image);
+  li.style.display = "flex";
+  li.style.alignItems = "center";
+  const infoWrapper = document.createElement('div');
+  infoWrapper.style.margin = "auto";
+  if(restaurant.photograph){
+    const image = document.createElement('img');
+    image.className = 'restaurant-img';
+    image.alt = `${restaurant.altDescription}`;
+    image.src = `/img/ld/${restaurant.photograph}`;
+    image.srcset = `/img/ld/${restaurant.photograph} 1x, /img/hd/${restaurant.photograph} 2x`;
+    infoWrapper.append(image);
+  }
 
   const name = document.createElement('h1');
   name.innerHTML = restaurant.name;
-  li.append(name);
+  infoWrapper.append(name);
 
   const neighborhood = document.createElement('p');
   neighborhood.innerHTML = restaurant.neighborhood;
-  li.append(neighborhood);
+  infoWrapper.append(neighborhood);
 
   const address = document.createElement('p');
   address.innerHTML = restaurant.address;
-  li.append(address);
+  infoWrapper.append(address);
 
   const more = document.createElement('a');
   more.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
-  li.append(more)
-
+  infoWrapper.append(more)
+  li.append(infoWrapper);
   return li
 }
 

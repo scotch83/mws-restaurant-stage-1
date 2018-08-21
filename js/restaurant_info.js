@@ -4,7 +4,7 @@ var newMap;
 /**
  * Initialize map as soon as the page is loaded.
  */
-document.addEventListener('DOMContentLoaded', (event) => {  
+document.addEventListener('DOMContentLoaded', (event) => {
   initMap();
 });
 
@@ -85,13 +85,14 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 
   const address = document.getElementById('restaurant-address');
   address.innerHTML = restaurant.address;
-
   const image = document.getElementById('restaurant-img');
-  image.className = 'restaurant-img';
-  image.alt = `${restaurant.name}, ${restaurant.altDescription}`;
-  image.tabIndex = 0;
-  image.src = `/img/ld/${restaurant.photograph}`;
-  image.srcset = `/img/ld/${restaurant.photograph} 1x, /img/hd/${restaurant.photograph} 2x`;
+  if(restaurant.photograph){
+    image.className = 'restaurant-img';
+    image.alt = `${restaurant.name}, ${restaurant.altDescription}`;
+    image.tabIndex = 0;
+    image.src = `/img/ld/${restaurant.photograph}`;
+    image.srcset = `/img/ld/${restaurant.photograph} 1x, /img/hd/${restaurant.photograph} 2x`;
+  } else image.remove();
   const cuisine = document.getElementById('restaurant-cuisine');
   cuisine.innerHTML = restaurant.cuisine_type;
 
