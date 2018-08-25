@@ -1,18 +1,32 @@
 let DBPromise;
 class IDBManager {
+  static get RestaurantsStore() {
+    return 'restaurants';
+  }
+  static get ReviewsStore() {
+    return 'reviews';
+  }
+  static get ReviewsToSendStore() {
+    return 'reviews-to-send';
+  }
+  static get RestaurantNameIndex() {
+    return 'resto-name';
+  }
+  static get RestaurantIdOnReviewIndex() {
+    return 'resto';
+  }
   static init() {
     DBPromise = idb.open('resto-reviews-db', 2, (db) => {
       let store;
       switch (db.oldVersion) {
         case 0:
-          store = db.createObjectStore('restaurants', {keyPath: 'id'});
-          store.createIndex('resto-name', 'name');
+          store = db.createObjectStore(IDBManager.RestaurantsStore, {keyPath: 'id'});
         case 1:
-          store = db.createObjectStore('reviews', {keyPath: 'id'});
-          store.createIndex('resto', 'restaurant_id');
+          store = db.createObjectStore(IDBManager.ReviewsStore, {keyPath: 'id'});
+          store.createIndex(IDBManager.RestaurantIdOnReviewIndex, 'restaurant_id');
           store = db.createObjectStore(
-              'reviews-to-send', {keyPath: 'local_id', autoIncrement: true});
-          store.createIndex('resto', 'restaurant_id');
+              IDBManager.ReviewsToSendStore, {keyPath: 'local_id', autoIncrement: true});
+          store.createIndex(IDBManager.RestaurantIdOnReviewIndex, 'restaurant_id');
       }
     });
   }
