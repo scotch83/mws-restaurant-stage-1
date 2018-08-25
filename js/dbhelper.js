@@ -173,6 +173,23 @@ class DBHelper {
     .then(json => callback(json))
     .catch(err => console.error(err));
   }
+  static postReview(review, callback){
+    fetch(
+      `${DBHelper.DATABASE_URL}/reviews`,
+      {
+        method:'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(review)
+      })
+      .then(res => res.json())
+      .then(json => {
+        if(callback)
+          callback(json);
+      })
+      .catch(err => console.error(err));
+  }
   /* static mapMarkerForRestaurant(restaurant, map) {
     const marker = new google.maps.Marker({
       position: restaurant.latlng,
