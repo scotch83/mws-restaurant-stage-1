@@ -30,7 +30,6 @@ class DBHelper {
         IDBManager
           .getTableFromIDB(IDBManager.RestaurantsStore)
           .then(restos => {
-            console.log(restos);
             if(callback)
               callback(null, restos);
           });
