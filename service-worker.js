@@ -12,6 +12,9 @@ const toBeCached = [
   'js/dbhelper.js',
   'js/service-worker-loader.js',
   'leaflet/leaflet.css',
+  'https://use.fontawesome.com/releases/v5.2.0/css/all.css',
+  'https://use.fontawesome.com/releases/v5.2.0/webfonts/fa-solid-900.woff2',
+  'https://use.fontawesome.com/releases/v5.2.0/webfonts/fa-regular-400.woff2',
   'leaflet/leaflet.js'
 ];
 self.addEventListener('fetch', (event) => {
