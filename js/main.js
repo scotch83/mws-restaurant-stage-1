@@ -165,6 +165,9 @@ getFavorite = (restaurant) => {
   favoriteBtn.className = 'favorite-widget';
   favoriteBtn.addEventListener('click', () => {
     restaurant.is_favorite = !isFavorite(restaurant);
+    DBHelper.putFavorite(restaurant, (returnedResto) => {
+      icon.className = `${isFavorite(returnedResto) ? "fas" : "far"} fa-heart`;
+    });
   });
   favoriteBtn.tabIndex = 0;
   favoriteBtn.append(textLabel);

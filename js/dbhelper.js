@@ -118,7 +118,17 @@ class DBHelper {
       }
     });
   }
-
+  static putFavorite(restaurant, callback){
+    fetch(
+      `${DBHelper.DATABASE_URL}restaurants/${restaurant.id}/?is_favorite=${restaurant.is_favorite}`,
+      {
+        method:'PUT'
+      }
+    )
+    .then(res => res.json())
+    .then(json => callback(json))
+    .catch(err => console.error(err));
+  }
   /**
    * Fetch all cuisines with proper error handling.
    */
