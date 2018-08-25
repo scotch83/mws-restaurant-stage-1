@@ -41,10 +41,15 @@ class IDBManager {
       });
   }
   static putInIDBStore(storeName, obj){
+    if(!obj.forEach && typeof(obj) === 'object')
+      obj = [obj];
     return DBPromise.then(db => {
       if(!db) return;
       const tx = db.transaction(storeName, 'readwrite');
-      tx.objectStore(storeName).put(obj);
+      const store = tx.objectStore(storeName);
+      obj.map(item =>
+        store.put(item)
+      );
       return tx.complete;
     });
   }
