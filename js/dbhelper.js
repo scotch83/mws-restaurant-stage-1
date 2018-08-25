@@ -212,11 +212,23 @@ class DBHelper {
       })
       .then(res => res.json())
       .then(json => {
-        IDBManager.putInIDBStore(IDBManager.ReviewsStore, json);
-        if(callback)
-          callback(json);
+        IDBManager
+        .putInIDBStore(IDBManager.ReviewsStore, json)
+        .then(() => {
+          if(callback)
+            callback(json);
+        });
       })
-      .catch(err => console.error(err));
+      .catch(err =>
+      {
+        console.error(err);
+        IDBManager
+        .putInIDBStore(IDBManager.ReviewsToSendStore, review)
+        .then(() => {
+          if(callback)
+          callback(review);
+        });
+      });
   }
   /* static mapMarkerForRestaurant(restaurant, map) {
     const marker = new google.maps.Marker({
