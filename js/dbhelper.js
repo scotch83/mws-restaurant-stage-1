@@ -21,11 +21,14 @@ class DBHelper {
       .then(json => {
         json.map(restaurant => {
           if(restaurant.photograph) restaurant.photograph = `${restaurant.photograph}.jpg`;
+          IDBManager.putInIDBStore(IDBManager.RestaurantsStore, restaurant);
         });
         callback(null, json);
       })
       .catch(err => {
         console.error(`Request failed. Returned status of ${err.status}`);
+        IDBManager
+          .getTableFromIDB(IDBManager.RestaurantsStore,restos => callback(restos));
       });
   }
 
