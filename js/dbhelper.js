@@ -179,8 +179,22 @@ class DBHelper {
   static fetchReviewsById(restaurantId, callback){
     fetch(`${DBHelper.DATABASE_URL}/reviews/?restaurant_id=${restaurantId}`)
     .then(res => res.json())
-    .then(json => callback(json))
-    .catch(err => console.error(err));
+    .then(json => {
+      IDBManager.putInIDBStore(IDBManager.ReviewsStore,json);
+      if(callback)
+        callback(json);
+    })
+    .catch(err => {
+      console.error(err);
+      IDBManager.getTableFromIDB(IDBManager.ReviewsStore)
+      .then(res => {
+        IDBManager.getTableFromIDB(IDBManager.ReviewsToSendStore)
+        .then(toSend => {
+          if(callback)
+            callback([...res,...toSend]);
+        });
+      });
+    });
   }
   static postReview(review, callback){
     fetch(
