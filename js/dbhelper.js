@@ -194,6 +194,7 @@ class DBHelper {
       })
       .then(res => res.json())
       .then(json => {
+        IDBManager.putInIDBStore(IDBManager.ReviewsStore, json);
         if(callback)
           callback(json);
       })
