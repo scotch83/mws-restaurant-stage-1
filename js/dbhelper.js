@@ -8,37 +8,24 @@ class DBHelper {
    * Change this to restaurants.json file location on your server.
    */
   static get DATABASE_URL() {
-    const port = 1337 // Change this to your server port
-    return `http://localhost:${port}/restaurants`;
+    const port = 1337; // Change this to your server port
+    return `http://localhost:${port}`;
   }
 
   /**
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-    const dbPromise = _dbPromise;
-    fetch(DBHelper.DATABASE_URL)
+    fetch(`${DBHelper.DATABASE_URL}/restaurants`)
       .then(response => response.json())
       .then(json => {
         json.map(restaurant => {
           if(restaurant.photograph) restaurant.photograph = `${restaurant.photograph}.jpg`;
         });
-        dbPromise.then(db => {
-          if(!db) return;
-          const transaction = db.transaction("restaurants", "readwrite");
-          const store = transaction.objectStore("restaurants");
-          json.map(item => store.put(item));
-        })
         callback(null, json);
       })
       .catch(err => {
         console.error(`Request failed. Returned status of ${err.status}`);
-        dbPromise.then(db => {
-          if(!db) return;
-          const transaction = db.transaction("restaurants", "readwrite");
-          const store = transaction.objectStore("restaurants");
-          store.getAll().then(dbData =>callback(null, dbData));
-        })
       });
   }
 
@@ -102,7 +89,7 @@ class DBHelper {
       if (error) {
         callback(error, null);
       } else {
-        let results = restaurants
+        let results = restaurants;
         if (cuisine != 'all') { // filter by cuisine
           results = results.filter(r => r.cuisine_type == cuisine);
         }
@@ -124,14 +111,24 @@ class DBHelper {
         callback(error, null);
       } else {
         // Get all neighborhoods from all restaurants
-        const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood)
+        const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood);
         // Remove duplicates from neighborhoods
-        const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i)
+        const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i);
         callback(null, uniqueNeighborhoods);
       }
     });
   }
-
+  static putFavorite(restaurant, callback){
+    fetch(
+      `${DBHelper.DATABASE_URL}/restaurants/${restaurant.id}/?is_favorite=${restaurant.is_favorite}`,
+      {
+        method:'PUT'
+      }
+    )
+    .then(res => res.json())
+    .then(json => callback(json))
+    .catch(err => console.error(err));
+  }
   /**
    * Fetch all cuisines with proper error handling.
    */
@@ -142,9 +139,9 @@ class DBHelper {
         callback(error, null);
       } else {
         // Get all cuisines from all restaurants
-        const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type)
+        const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type);
         // Remove duplicates from cuisines
-        const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) == i)
+        const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) == i);
         callback(null, uniqueCuisines);
       }
     });
@@ -166,9 +163,32 @@ class DBHelper {
       {title: restaurant.name,
       alt: restaurant.name,
       url: DBHelper.urlForRestaurant(restaurant)
-      })
-      marker.addTo(newMap);
+      });
+      marker.addTo(map);
     return marker;
+  }
+  static fetchReviewsById(restaurantId, callback){
+    fetch(`${DBHelper.DATABASE_URL}/reviews/?restaurant_id=${restaurantId}`)
+    .then(res => res.json())
+    .then(json => callback(json))
+    .catch(err => console.error(err));
+  }
+  static postReview(review, callback){
+    fetch(
+      `${DBHelper.DATABASE_URL}/reviews`,
+      {
+        method:'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(review)
+      })
+      .then(res => res.json())
+      .then(json => {
+        if(callback)
+          callback(json);
+      })
+      .catch(err => console.error(err));
   }
   /* static mapMarkerForRestaurant(restaurant, map) {
     const marker = new google.maps.Marker({

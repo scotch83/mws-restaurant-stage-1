@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Add review</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="js/utils.js"></script>
+  <script src="js/libs/idb-promised.js"></script>
+  <script src="js/idb-manager.js"></script>
+  <script src="js/dbhelper.js"></script>
+  <script src="js/reviews.js"></script>
+  <script src="js/service-worker-loader.js"></script>
+</head>
+
+<body class="review-form">
+  <!-- Beginning header -->
+  <header>
+    <!-- Beginning nav -->
+    <nav>
+      <h1>
+        <a href="/" aria-label="Restaurant Reviews - Reviews page">Restaurant Reviews</a>
+      </h1>
+      <!-- Beginning breadcrumb -->
+      <ul id="breadcrumb" role="navigation" aria-label="Breadcrumb">
+        <li><a href="/">Home</a></li>
+      </ul>
+    </nav>
+    <!-- End breadcrumb -->
+    <!-- End nav -->
+  </header>
+  <!-- End header -->
+  <main id="maincontent">
+    <h2>Add review</h2>
+    <div class="form-card">
+      <form id="review" action="" onsubmit="return submitReview(event)">
+        <p class="form-input">
+          <label for="name" class="hidden">
+            Name:
+          </label>
+            <input type="text" name="name" id="name" placeholder="Your name"/>
+        </p>
+        <p class="form-input">
+          <label for="rating">
+            Rating:
+          </label>
+            <select name="rating" id="rating">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+        </p>
+        <p class="form-input">
+          <label for="comments" class="hidden">
+            Review:
+          </label>
+            <textarea name="comments" placeholder="Write here your review" id="comments"></textarea>
+        </p>
+        <p class="form-input">
+          <button id="cancel-btn">Cancel</button>
+          <button id="save-btn">Save</button>
+        </p>
+      </form>
+    </div>
+  </main>
+  <footer id="footer">
+    Copyright (c) 2017
+    <a href="/">
+      <strong>Restaurant Reviews</strong>
+    </a> All Rights Reserved.
+  </footer>
+</body>
+
+</html>

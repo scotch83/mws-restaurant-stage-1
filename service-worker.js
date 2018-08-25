@@ -3,6 +3,7 @@
 const cacheVersion = 'v4';
 const staticCacheName = `resto-rev-cache-${cacheVersion}`;
 const imagesCache = `resto-rev-cache-images-${cacheVersion}`;
+const imageRegex = new RegExp(/(.*)(\/)(.*)\.(jpg|png|gif)$/);
 const toBeCached = [
   '/', '/restaurant.html',
   'css/styles.css',
@@ -11,6 +12,9 @@ const toBeCached = [
   'js/dbhelper.js',
   'js/service-worker-loader.js',
   'leaflet/leaflet.css',
+  'https://use.fontawesome.com/releases/v5.2.0/css/all.css',
+  'https://use.fontawesome.com/releases/v5.2.0/webfonts/fa-solid-900.woff2',
+  'https://use.fontawesome.com/releases/v5.2.0/webfonts/fa-regular-400.woff2',
   'leaflet/leaflet.js'
 ];
 self.addEventListener('fetch', (event) => {
@@ -21,7 +25,7 @@ self.addEventListener('fetch', (event) => {
       event.respondWith(serveFromCache('/restaurant.html'));
       return;
     }
-    if (requestUrl.pathname.match(/(.*)(\/)(.*)\.(jpg|png|gif)$/)) {
+    if (requestUrl.pathname.match(imageRegex)) {
       event.respondWith(serveImg(event.request));
       return;
     }

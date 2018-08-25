@@ -101,7 +101,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     fillRestaurantHoursHTML();
   }
   // fill reviews
-  fillReviewsHTML();
+  DBHelper.fetchReviewsById(restaurant.id,reviews => fillReviewsHTML(reviews));
 }
 
 /**
@@ -133,6 +133,13 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   title.innerHTML = 'Reviews';
   container.appendChild(title);
 
+  const addButton = document.createElement('a');
+  addButton.href = `/add-review.html?id=${Utils.getParam('id')}`;
+  addButton.className = 'add-review-btn';
+  addButton.textContent = "Add review..."
+  container.appendChild(addButton);
+
+
   if (!reviews) {
     const noReviews = document.createElement('p');
     noReviews.innerHTML = 'No reviews yet!';
@@ -157,7 +164,7 @@ createReviewHTML = (review) => {
   li.appendChild(name);
 
   const date = document.createElement('p');
-  date.innerHTML = review.date;
+  date.innerHTML = new Date(review.updatedAt).toUTCString().replace(' GMT','');
   li.appendChild(date);
 
   const rating = document.createElement('p');

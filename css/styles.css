@@ -1,6 +1,9 @@
 @charset "utf-8";
 /* CSS Document */
-
+body, html {
+  height: 100%;
+  width: 100%;
+}
 body,td,th,p{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 10pt;
@@ -35,8 +38,12 @@ h1, h2, h3, h4, h5, h6 {
 article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
 	display: block;
 }
+button {
+  overflow-wrap: break-word;
+}
 #maincontent {
   background-color: #f3f3f3;
+  flex-grow: 1;
   display: flex;
   flex-flow: column;
 }
@@ -250,6 +257,8 @@ nav h1 a {
   padding: 30px 40px 80px;
 }
 #reviews-container h2 {
+  flex-grow: 1;
+  display: inline-block;
   color: #f58500;
   font-size: 24pt;
   font-weight: 300;
@@ -319,6 +328,13 @@ nav h1 a {
 #toast-message{
   text-align: center;
 }
+.add-review-btn {
+  float: right;
+  margin: 5px;
+  border: solid;
+  padding: 5px;
+  border-radius: 5px;
+}
 .show-transparent-element {
   display: block;
 }
@@ -354,10 +370,126 @@ nav h1 a {
   }
   #restaurants-list li {
     width: calc(50% - 84px);
+    display: flex;
+    align-items: center;
+  }
+  #info-wrapper {
+    margin: auto;
   }
 }
 @media only screen and (min-width: 1200px) {
   #restaurants-list li {
     width: calc(33% - 84px);
+  }
+}
+
+/* ====================== Review form ====================== */
+.review-form {
+  display: flex;
+  flex-flow: column nowrap;
+}
+.review-form #maincontent {
+  display: block;
+}
+.review-form #breadcrumb {
+  width: calc(100% - 80px);
+}
+.review-form h2 {
+  background-color: #252831;
+  color: #ddd;
+  font-size: 12pt;
+  font-weight: 300;
+  letter-spacing: 10px;
+  padding: 20px;
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+.review-form p {
+  display: flex;
+}
+.review-form label {
+  padding: 0 8px;
+  font-weight: 900;
+  width: 50%;
+  font-size: 1.5em;
+}
+.review-form input {
+  width: 100%;
+  font-size: 2em;
+  padding: 8px;
+  border: none;
+  border-bottom: 1px solid grey;
+}
+.review-form select {
+  font-size: 1em;
+  width: 50%;
+  font-weight: 900;
+  border: none;
+}
+.review-form textarea {
+  height: 133px;
+  font-size: 1.2em;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 8px;
+  width: calc(100% - 16px);
+}
+.review-form button {
+  width: calc(50% - (18px)*2);
+  margin: 10px;
+  flex-grow: 1;
+  background: transparent;
+  font-weight: bold;
+  letter-spacing: 2px;
+  padding: 5px 0;
+  border-radius: 12px;
+}
+.form-card {
+  padding: 20px;
+  width: calc(100% - 42px);
+  height: 100%;
+  background-color: white;
+}
+#review {
+  display: flex;
+  flex-direction: column;
+}
+.form-input {
+  width: 100%;
+}
+.form-input * {
+  color: #666;
+}
+.hidden {
+  display: none;
+}
+.favorite-btn {
+  margin-right: 5px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.favorite-widget {
+  float: right;
+  display: inline-block;
+  font-size: 10pt;
+  margin: 15px 0 0;
+  padding: 10px 0;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.review-form  #footer {
+  position: relative;
+}
+@media only screen and (min-width: 600px) {
+  .form-card {
+    padding: 20px 50px;
+    border: lightgrey solid 1px;
+    margin: 30px 20px;
+    border-radius: 5px;
+    box-shadow: darkgrey 5px 5px 5px;
+    width: calc(100% - 142px);
   }
 }
