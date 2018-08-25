@@ -319,6 +319,13 @@ nav h1 a {
 #toast-message{
   text-align: center;
 }
+.add-review-btn {
+  float: right;
+  margin: 5px;
+  border: solid;
+  padding: 5px;
+  border-radius: 5px;
+}
 .show-transparent-element {
   display: block;
 }
