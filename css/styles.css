@@ -304,7 +304,7 @@ nav h1 a {
   display: none;
 }
 .overlay {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   background-color: black;
   opacity: 0.5;
