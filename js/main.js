@@ -152,6 +152,30 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   addMarkersToMap();
 }
 
+getFavorite = (restaurant) => {
+  const text = 'Add to favorites';
+  const favoriteBtn = document.createElement('div');
+  favoriteBtn.setAttribute('role', 'button');
+  const textLabel = document.createElement('span');
+  const icon = document.createElement('span');
+  textLabel.textContent = text;
+  favoriteBtn.setAttribute('aria-label', text);
+  icon.className = `${isFavorite(restaurant) ? "fas" : "far"} fa-heart`;
+  textLabel.className = 'favorite-btn';
+  favoriteBtn.className = 'favorite-widget';
+  favoriteBtn.addEventListener('click', () => {
+    restaurant.is_favorite = !isFavorite(restaurant);
+  });
+  favoriteBtn.tabIndex = 0;
+  favoriteBtn.append(textLabel);
+  favoriteBtn.append(icon);
+  return favoriteBtn;
+}
+
+isFavorite = (restaurant) => {
+  return restaurant.is_favorite != 'false' && (restaurant.is_favorite || restaurant.is_favorite == 'true');
+}
+
 /**
  * Create restaurant HTML.
  */
@@ -161,7 +185,7 @@ createRestaurantHTML = (restaurant) => {
   li.style.display = "flex";
   li.style.alignItems = "center";
   const infoWrapper = document.createElement('div');
-  infoWrapper.style.margin = "auto";
+  infoWrapper.id = "info-wrapper";
   if(restaurant.photograph){
     const image = document.createElement('img');
     image.className = 'restaurant-img';
@@ -187,6 +211,7 @@ createRestaurantHTML = (restaurant) => {
   more.innerHTML = 'View Details';
   more.href = DBHelper.urlForRestaurant(restaurant);
   infoWrapper.append(more)
+  infoWrapper.append(getFavorite(restaurant));
   li.append(infoWrapper);
   return li
 }
