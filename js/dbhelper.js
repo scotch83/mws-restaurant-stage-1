@@ -167,6 +167,12 @@ class DBHelper {
       marker.addTo(map);
     return marker;
   }
+  static fetchReviewsById(restaurantId, callback){
+    fetch(`${DBHelper.DATABASE_URL}/reviews/?restaurant_id=${restaurantId}`)
+    .then(res => res.json())
+    .then(json => callback(json))
+    .catch(err => console.error(err));
+  }
   /* static mapMarkerForRestaurant(restaurant, map) {
     const marker = new google.maps.Marker({
       position: restaurant.latlng,
