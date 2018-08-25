@@ -133,6 +133,13 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   title.innerHTML = 'Reviews';
   container.appendChild(title);
 
+  const addButton = document.createElement('a');
+  addButton.href = `/add-review.html?id=${Utils.getParam('id')}`;
+  addButton.className = 'add-review-btn';
+  addButton.textContent = "Add review..."
+  container.appendChild(addButton);
+
+
   if (!reviews) {
     const noReviews = document.createElement('p');
     noReviews.innerHTML = 'No reviews yet!';
