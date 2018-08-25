@@ -222,6 +222,8 @@ class DBHelper {
       .catch(err =>
       {
         console.error(err);
+        review['createdAt'] = Date.now();
+        review['updatedAt'] = Date.now();
         IDBManager
         .putInIDBStore(IDBManager.ReviewsToSendStore, review)
         .then(() => {
