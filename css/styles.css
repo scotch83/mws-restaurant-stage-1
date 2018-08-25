@@ -43,6 +43,7 @@ button {
 }
 #maincontent {
   background-color: #f3f3f3;
+  flex-grow: 1;
   display: flex;
   flex-flow: column;
 }
