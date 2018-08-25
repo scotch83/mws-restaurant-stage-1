@@ -30,14 +30,14 @@ class IDBManager {
       }
     });
   }
-  static getFromIDB(storeName, restaurant_id) {
-    if(typeof(restaurant_id) === 'string')
-      restaurant_id = parseInt(restaurant_id);
+  static getFromIDB(storeName, item_id) {
+    if(typeof(item_id) === 'string')
+      item_id = parseInt(item_id);
     return DBPromise.then(db => {
         if(!db) return;
         return db.transaction(storeName)
         .objectStore(storeName)
-        .get(restaurant_id);
+        .get(item_id);
       });
   }
   static putInIDBStore(storeName, obj){
