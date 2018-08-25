@@ -28,7 +28,12 @@ class DBHelper {
       .catch(err => {
         console.error(`Request failed. Returned status of ${err.status}`);
         IDBManager
-          .getTableFromIDB(IDBManager.RestaurantsStore,restos => callback(restos));
+          .getTableFromIDB(IDBManager.RestaurantsStore)
+          .then(restos => {
+            console.log(restos);
+            if(callback)
+              callback(null, restos);
+          });
       });
   }
 
