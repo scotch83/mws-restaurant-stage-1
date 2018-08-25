@@ -25,8 +25,8 @@ class DBHelper {
         });
         dbPromise.then(db => {
           if(!db) return;
-          const transaction = db.transaction("restaurants", "readwrite");
-          const store = transaction.objectStore("restaurants");
+          const transaction = db.transaction('restaurants', 'readwrite');
+          const store = transaction.objectStore('restaurants');
           json.map(item => store.put(item));
         })
         callback(null, json);
@@ -35,8 +35,8 @@ class DBHelper {
         console.error(`Request failed. Returned status of ${err.status}`);
         dbPromise.then(db => {
           if(!db) return;
-          const transaction = db.transaction("restaurants", "readwrite");
-          const store = transaction.objectStore("restaurants");
+          const transaction = db.transaction('restaurants', 'readwrite');
+          const store = transaction.objectStore('restaurants');
           store.getAll().then(dbData =>callback(null, dbData));
         })
       });
