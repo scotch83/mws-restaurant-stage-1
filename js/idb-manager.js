@@ -76,6 +76,19 @@ class IDBManager {
       .delete(item);
     });
   }
+  static processTable(storeName, callback){
+    return DBPromise.then(db => {
+      if(!db) return;
+      return db.transaction(storeName, 'readwrite')
+      .objectStore(storeName)
+      .openCursor();
+     })
+     .then(function oneByOne(c) {
+       if(!c) return;
+       callback(c.value);
+       return c.continue().then(oneByOne);
+     });
+  }
 }
 
 IDBManager.init();
