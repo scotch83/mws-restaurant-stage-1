@@ -190,9 +190,9 @@ class DBHelper {
     })
     .catch(err => {
       console.error(err);
-      IDBManager.getTableFromIDB(IDBManager.ReviewsStore)
+      IDBManager.getValueOnIndex(IDBManager.RestaurantIdOnReviewIndex,IDBManager.ReviewsStore,restaurantId)
       .then(res => {
-        IDBManager.getTableFromIDB(IDBManager.ReviewsToSendStore)
+        IDBManager.getValueOnIndex(IDBManager.RestaurantIdOnReviewIndex,IDBManager.ReviewsToSendStore,restaurantId)
         .then(toSend => {
           if(callback)
             callback([...res,...toSend]);
