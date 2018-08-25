@@ -170,6 +170,12 @@ class DBHelper {
       marker.addTo(map);
     return marker;
   }
+  static fetchAndStoreAllReviews(){
+    fetch(`${DBHelper.DATABASE_URL}/reviews`)
+    .then(res => res.json())
+    .then(json => IDBManager.putInIDBStore(IDBManager.ReviewsStore,json))
+    .catch(err => console.error(err));
+  }
   static fetchReviewsById(restaurantId, callback){
     fetch(`${DBHelper.DATABASE_URL}/reviews/?restaurant_id=${restaurantId}`)
     .then(res => res.json())
