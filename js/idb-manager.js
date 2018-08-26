@@ -3,6 +3,9 @@ class IDBManager {
   static get RestaurantsStore() {
     return 'restaurants';
   }
+  static get FavoritesUpdate() {
+    return 'favorites-update';
+  }
   static get ReviewsStore() {
     return 'reviews';
   }
@@ -16,7 +19,7 @@ class IDBManager {
     return 'resto';
   }
   static init() {
-    DBPromise = idb.open('resto-reviews-db', 2, (db) => {
+    DBPromise = idb.open('resto-reviews-db', 3, (db) => {
       let store;
       switch (db.oldVersion) {
         case 0:
@@ -27,6 +30,8 @@ class IDBManager {
           store = db.createObjectStore(
               IDBManager.ReviewsToSendStore, {keyPath: 'local_id', autoIncrement: true});
           store.createIndex(IDBManager.RestaurantIdOnReviewIndex, 'restaurant_id');
+        case 2:
+          store = db.createObjectStore(IDBManager.FavoritesUpdate, {keyPath: 'restaurant_id'});
       }
     });
   }
@@ -60,6 +65,28 @@ class IDBManager {
       return tx.objectStore(storeName).getAll();
     });
   }
+  static sendOfflineFavorite(){
+    console.log('sendign offline favorites')
+    return IDBManager.getTableFromIDB(IDBManager.FavoritesUpdate)
+    .then(favoritesToUpdate => {
+      return Promise.all(favoritesToUpdate.map(item =>{
+        console.log(item);
+        return fetch(
+          `${DBHelper.DATABASE_URL}/restaurants/${item.restaurant_id}/?is_favorite=${item.is_favorite}`,
+          {
+            method:'PUT'
+          }
+        ).then(res => {
+            if(res.ok){
+              return IDBManager.deleteFromStore(IDBManager.FavoritesUpdate, item.restaurant_id);
+            }
+          })
+          .catch(err => {
+            console.error(`Something went wrong when trying to post the review with local_id ${review.local_id}`, err);
+          });
+      }));
+  });
+}
   static sendOfflineReviews(){
       return IDBManager.getTableFromIDB(IDBManager.ReviewsToSendStore)
       .then(reviews => {

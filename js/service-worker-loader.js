@@ -118,7 +118,7 @@ window.addEventListener('load', () => {
       refreshing = true;
     })
     navigator.serviceWorker.ready.then(function(swRegistration) {
-      return swRegistration.sync.register('offline-reviews-send');
+      return swRegistration.sync.register('offline-data');
     });
   }
 })

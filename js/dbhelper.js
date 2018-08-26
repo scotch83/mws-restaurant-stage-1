@@ -23,7 +23,8 @@ class DBHelper {
           if(restaurant.photograph) restaurant.photograph = `${restaurant.photograph}.jpg`;
           IDBManager.putInIDBStore(IDBManager.RestaurantsStore, restaurant);
         });
-        callback(null, json);
+        if(callback)
+          callback(null, json);
       })
       .catch(err => {
         console.error(`Request failed. Returned status of ${err.status}`);
@@ -133,8 +134,28 @@ class DBHelper {
       }
     )
     .then(res => res.json())
-    .then(json => callback(json))
-    .catch(err => console.error(err));
+    .then(json => {
+      IDBManager.putInIDBStore(IDBManager.RestaurantsStore, json);
+      if(callback)
+        callback(json);
+    })
+    .catch(err => {
+      IDBManager.putInIDBStore(IDBManager.FavoritesUpdate, {
+        restaurant_id: restaurant.id,
+        is_favorite: restaurant.is_favorite
+      }).then(() => {
+        IDBManager.getFromIDB(IDBManager.RestaurantsStore, restaurant.id)
+        .then((resto) =>{
+          resto.is_favorite = restaurant.is_favorite;
+          IDBManager.putInIDBStore(IDBManager.RestaurantsStore, restaurant)
+          .then(()=> {
+            if(callback)
+              callback(restaurant);
+          });
+        });
+      });
+      console.error(err);
+    });
   }
   /**
    * Fetch all cuisines with proper error handling.

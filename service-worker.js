@@ -1,5 +1,5 @@
 'use strict';
-const cacheVersion = 'v5';
+const cacheVersion = 'v6';
 const staticCacheName = `resto-rev-cache-${cacheVersion}`;
 const imagesCache = `resto-rev-cache-images-${cacheVersion}`;
 const imageRegex = new RegExp(/(.*)(\/)(.*)\.(jpg|png|gif)$/);
@@ -13,6 +13,9 @@ const toBeCached = [
   'js/dbhelper.js',
   'js/service-worker-loader.js',
   'leaflet/leaflet.css',
+  'https://use.fontawesome.com/releases/v5.2.0/webfonts/fa-solid-900.woff2',
+  'https://use.fontawesome.com/releases/v5.2.0/webfonts/fa-solid-900.woff',
+  'https://use.fontawesome.com/releases/v5.2.0/webfonts/fa-solid-900.ttf',
   'https://use.fontawesome.com/releases/v5.2.0/css/all.css',
   'leaflet/leaflet.js'
 ];
@@ -31,12 +34,20 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(serveFromCache(requestUrl.pathname));
     return;
   }
+  if(requestUrl.origin.indexOf('use.fontawesome.com') !== -1) {
+    event.respondWith(serveFromCache(event.request));
+    return;
+  }
   event.respondWith(handleRemoteFetching(event.request));
 });
 self.addEventListener('sync', function(event){
   console.log('syncing', event.tag);
-  if(event.tag === 'offline-reviews-send')
-    event.waitUntil(IDBManager.sendOfflineReviews().then(()=> DBHelper.fetchAndStoreAllReviews()));
+  if(event.tag === 'offline-data')
+    event.waitUntil(
+      Promise.all([
+        IDBManager.sendOfflineReviews().then(() => DBHelper.fetchAndStoreAllReviews()),
+        IDBManager.sendOfflineFavorite().then(() => DBHelper.fetchRestaurants())
+      ]));
 });
 function handleRemoteFetching(request){
   return caches.match(request).then(res => {
