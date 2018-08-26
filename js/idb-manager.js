@@ -60,6 +60,31 @@ class IDBManager {
       return tx.objectStore(storeName).getAll();
     });
   }
+  static sendOfflineReviews(){
+      return IDBManager.getTableFromIDB(IDBManager.ReviewsToSendStore)
+      .then(reviews => {
+        return Promise.all(reviews.map(review =>{
+          console.log(`posting review with local_id ${review.local_id}`);
+          return fetch(
+            'http://localhost:1337/reviews',
+            {
+              method:'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(review)
+            }).then(res => {
+              if(res.ok){
+                console.log(`Review with local_id ${review.local_id} succesfully posted!!!`);
+                return IDBManager.deleteFromStore(IDBManager.ReviewsToSendStore, review.local_id);
+              }
+            })
+            .catch(err => {
+              console.error(`Something went wrong when trying to post the review with local_id ${review.local_id}`, err);
+            });
+        }));
+    });
+  }
   static getValueOnIndex(indexName, storeName, selector){
     return DBPromise.then(db => {
       return db.transaction(storeName)
