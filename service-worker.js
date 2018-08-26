@@ -8,6 +8,8 @@ const toBeCached = [
   'css/styles.css',
   'js/main.js',
   'js/restaurant_info.js',
+  'js/libs/idb-promised.js',
+  'js/idb-manager.js',
   'js/dbhelper.js',
   'js/service-worker-loader.js',
   'leaflet/leaflet.css',
