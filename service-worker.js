@@ -36,7 +36,11 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('sync', function(event){
   console.log('syncing', event.tag);
   if(event.tag === 'offline-data')
-    event.waitUntil(IDBManager.sendOfflineReviews().then(()=> DBHelper.fetchAndStoreAllReviews()));
+    event.waitUntil(
+      Promise.all([
+        IDBManager.sendOfflineReviews().then(() => DBHelper.fetchAndStoreAllReviews()),
+        IDBManager.sendOfflineFavorite().then(() => DBHelper.fetchRestaurants())
+      ]));
 });
 function handleRemoteFetching(request){
   return caches.match(request).then(res => {
