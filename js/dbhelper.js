@@ -23,7 +23,8 @@ class DBHelper {
           if(restaurant.photograph) restaurant.photograph = `${restaurant.photograph}.jpg`;
           IDBManager.putInIDBStore(IDBManager.RestaurantsStore, restaurant);
         });
-        callback(null, json);
+        if(callback)
+          callback(null, json);
       })
       .catch(err => {
         console.error(`Request failed. Returned status of ${err.status}`);
