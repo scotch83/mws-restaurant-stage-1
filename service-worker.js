@@ -60,7 +60,7 @@ function serveImg(request) {
   });
 }
 self.addEventListener('install', function(e) {
-  self.importScripts('./js/libs/idb-promised.js', './js/idb-manager.js');
+  self.importScripts('./js/libs/idb-promised.js', './js/dbhelper.js', './js/idb-manager.js');
   e.waitUntil(
     caches.open(staticCacheName).then(cache => cache.addAll(toBeCached)));
 });
