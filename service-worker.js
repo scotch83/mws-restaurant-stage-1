@@ -29,33 +29,12 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(serveFromCache(requestUrl.pathname));
     return;
   }
-  if (requestUrl.pathname.endsWith('reviews') && event.request.method === 'POST') {
-    event.respondWith(fetch(event.request.clone)
-      .then(res => res)
-      .catch(err => {
-        return event.request.clone()
-        .then(res => res.text())
-        .then(review => {
-          console.log('Could not send review, falling back on local db');
-          if(!review.createdAt){
-            review['createdAt'] = Date.now();
-            review['updatedAt'] = Date.now();
-          }
-          console.log(IDBManager);
-          IDBManager.putInIDBStore(IDBManager.ReviewsToSendStore, review);
-      });
-    }));
-  } else event.respondWith(handleRemoteFetching(event.request));
+  event.respondWith(handleRemoteFetching(event.request));
 });
 function handleRemoteFetching(request){
   return caches.match(request).then(res => {
     return res || fetch(request);
-  })
-  .catch(err => console.error(err));
-}
-function handleFetchedResponses(json, request){
-  console.log(request);
-  return json;
+  });
 }
 function serveFromCache(key) {
   return caches.open(staticCacheName).then(cache => {
