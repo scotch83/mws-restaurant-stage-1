@@ -143,8 +143,15 @@ class DBHelper {
         restaurant_id: restaurant.id,
         is_favorite: restaurant.is_favorite
       }).then(() => {
-        if(callback)
-          callback(restaurant);
+        IDBManager.getFromIDB(IDBManager.RestaurantsStore, restaurant.id)
+        .then((resto) =>{
+          resto.is_favorite = restaurant.is_favorite;
+          IDBManager.putInIDBStore(IDBManager.RestaurantsStore, restaurant)
+          .then(()=> {
+            if(callback)
+              callback(restaurant);
+          });
+        });
       });
       console.error(err);
     });
