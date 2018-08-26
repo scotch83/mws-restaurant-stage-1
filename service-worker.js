@@ -35,7 +35,7 @@ self.addEventListener('fetch', (event) => {
 });
 self.addEventListener('sync', function(event){
   console.log('syncing', event.tag);
-  if(event.tag === 'offline-reviews-send')
+  if(event.tag === 'offline-data')
     event.waitUntil(IDBManager.sendOfflineReviews().then(()=> DBHelper.fetchAndStoreAllReviews()));
 });
 function handleRemoteFetching(request){
