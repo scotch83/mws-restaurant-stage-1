@@ -65,6 +65,28 @@ class IDBManager {
       return tx.objectStore(storeName).getAll();
     });
   }
+  static sendOfflineFavorite(){
+    console.log('sendign offline favorites')
+    return IDBManager.getTableFromIDB(IDBManager.FavoritesUpdate)
+    .then(favoritesToUpdate => {
+      return Promise.all(favoritesToUpdate.map(item =>{
+        console.log(item);
+        return fetch(
+          `${DBHelper.DATABASE_URL}/restaurants/${item.restaurant_id}/?is_favorite=${item.is_favorite}`,
+          {
+            method:'PUT'
+          }
+        ).then(res => {
+            if(res.ok){
+              return IDBManager.deleteFromStore(IDBManager.FavoritesUpdate, item.restaurant_id);
+            }
+          })
+          .catch(err => {
+            console.error(`Something went wrong when trying to post the review with local_id ${review.local_id}`, err);
+          });
+      }));
+  });
+}
   static sendOfflineReviews(){
       return IDBManager.getTableFromIDB(IDBManager.ReviewsToSendStore)
       .then(reviews => {
