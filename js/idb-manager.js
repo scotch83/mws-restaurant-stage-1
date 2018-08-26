@@ -3,6 +3,9 @@ class IDBManager {
   static get RestaurantsStore() {
     return 'restaurants';
   }
+  static get FavoritesUpdate() {
+    return 'favorites-update';
+  }
   static get ReviewsStore() {
     return 'reviews';
   }
@@ -16,7 +19,7 @@ class IDBManager {
     return 'resto';
   }
   static init() {
-    DBPromise = idb.open('resto-reviews-db', 2, (db) => {
+    DBPromise = idb.open('resto-reviews-db', 3, (db) => {
       let store;
       switch (db.oldVersion) {
         case 0:
@@ -27,6 +30,8 @@ class IDBManager {
           store = db.createObjectStore(
               IDBManager.ReviewsToSendStore, {keyPath: 'local_id', autoIncrement: true});
           store.createIndex(IDBManager.RestaurantIdOnReviewIndex, 'restaurant_id');
+        case 2:
+          store = db.createObjectStore(IDBManager.FavoritesUpdate, {keyPath: 'restaurant_id'});
       }
     });
   }
