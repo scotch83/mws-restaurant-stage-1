@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   initMap(); // added 
   fetchNeighborhoods();
   fetchCuisines();
+  DBHelper.fetchAndStoreAllReviews();
 });
 
 /**
@@ -185,8 +186,6 @@ isFavorite = (restaurant) => {
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
   li.tabIndex = 0;
-  li.style.display = "flex";
-  li.style.alignItems = "center";
   const infoWrapper = document.createElement('div');
   infoWrapper.id = "info-wrapper";
   if(restaurant.photograph){

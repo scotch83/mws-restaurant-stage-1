@@ -47,4 +47,4 @@ function Review(id, data) {
   this.comments = data.comments.value ? data.comments.value : data.comments;
 }
 
-window.addEventListener('load', () => _controller = new ReviewsController());
+window.addEventListener('DOMContentLoaded', () => _controller = new ReviewsController());

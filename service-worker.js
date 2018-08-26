@@ -1,6 +1,5 @@
 'use strict';
-
-const cacheVersion = 'v4';
+const cacheVersion = 'v5';
 const staticCacheName = `resto-rev-cache-${cacheVersion}`;
 const imagesCache = `resto-rev-cache-images-${cacheVersion}`;
 const imageRegex = new RegExp(/(.*)(\/)(.*)\.(jpg|png|gif)$/);
@@ -13,8 +12,6 @@ const toBeCached = [
   'js/service-worker-loader.js',
   'leaflet/leaflet.css',
   'https://use.fontawesome.com/releases/v5.2.0/css/all.css',
-  'https://use.fontawesome.com/releases/v5.2.0/webfonts/fa-solid-900.woff2',
-  'https://use.fontawesome.com/releases/v5.2.0/webfonts/fa-regular-400.woff2',
   'leaflet/leaflet.js'
 ];
 self.addEventListener('fetch', (event) => {
@@ -32,11 +29,18 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(serveFromCache(requestUrl.pathname));
     return;
   }
-  event.respondWith(
-    caches.match(event.request).then(res => {
-      return res || fetch(event.request);
-    }));
+  event.respondWith(handleRemoteFetching(event.request));
 });
+self.addEventListener('sync', function(event){
+  console.log('syncing', event.tag);
+  if(event.tag === 'offline-reviews-send')
+    event.waitUntil(IDBManager.sendOfflineReviews().then(()=> DBHelper.fetchAndStoreAllReviews()));
+});
+function handleRemoteFetching(request){
+  return caches.match(request).then(res => {
+    return res || fetch(request);
+  });
+}
 function serveFromCache(key) {
   return caches.open(staticCacheName).then(cache => {
     return cache.match(key).then(res => res || fetch(key).then(fetched => {
@@ -61,6 +65,7 @@ function serveImg(request) {
   });
 }
 self.addEventListener('install', function(e) {
+  self.importScripts('./js/libs/idb-promised.js', './js/dbhelper.js', './js/idb-manager.js');
   e.waitUntil(
     caches.open(staticCacheName).then(cache => cache.addAll(toBeCached)));
 });
@@ -70,7 +75,6 @@ self.addEventListener('message', function(event) {
 });
 
 self.addEventListener('activate', function (event) {
-
   event.waitUntil(caches.keys()
     .then(cachesKeys =>
       Promise.all(cachesKeys.filter((name) => name.startsWith('resto-') && !name.endsWith(cacheVersion))

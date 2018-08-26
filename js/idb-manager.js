@@ -1,36 +1,55 @@
 let DBPromise;
 class IDBManager {
+  static get RestaurantsStore() {
+    return 'restaurants';
+  }
+  static get ReviewsStore() {
+    return 'reviews';
+  }
+  static get ReviewsToSendStore() {
+    return 'reviews-to-send';
+  }
+  static get RestaurantNameIndex() {
+    return 'resto-name';
+  }
+  static get RestaurantIdOnReviewIndex() {
+    return 'resto';
+  }
   static init() {
     DBPromise = idb.open('resto-reviews-db', 2, (db) => {
       let store;
       switch (db.oldVersion) {
         case 0:
-          store = db.createObjectStore('restaurants', {keyPath: 'id'});
-          store.createIndex('resto-name', 'name');
+          store = db.createObjectStore(IDBManager.RestaurantsStore, {keyPath: 'id'});
         case 1:
-          store = db.createObjectStore('reviews', {keyPath: 'id'});
-          store.createIndex('resto', 'restaurant_id');
+          store = db.createObjectStore(IDBManager.ReviewsStore, {keyPath: 'id'});
+          store.createIndex(IDBManager.RestaurantIdOnReviewIndex, 'restaurant_id');
           store = db.createObjectStore(
-              'reviews-to-send', {keyPath: 'local_id', autoIncrement: true});
-          store.createIndex('resto', 'restaurant_id');
+              IDBManager.ReviewsToSendStore, {keyPath: 'local_id', autoIncrement: true});
+          store.createIndex(IDBManager.RestaurantIdOnReviewIndex, 'restaurant_id');
       }
     });
   }
-  static getFromIDB(storeName, restaurant_id) {
-    if(typeof(restaurant_id) === 'string')
-      restaurant_id = parseInt(restaurant_id);
+  static getFromIDB(storeName, item_id) {
+    if(typeof(item_id) === 'string')
+      item_id = parseInt(item_id);
     return DBPromise.then(db => {
         if(!db) return;
         return db.transaction(storeName)
         .objectStore(storeName)
-        .get(restaurant_id);
+        .get(item_id);
       });
   }
   static putInIDBStore(storeName, obj){
+    if(!obj.forEach && typeof(obj) === 'object')
+      obj = [obj];
     return DBPromise.then(db => {
       if(!db) return;
       const tx = db.transaction(storeName, 'readwrite');
-      tx.objectStore(storeName).put(obj);
+      const store = tx.objectStore(storeName);
+      obj.map(item =>
+        store.put(item)
+      );
       return tx.complete;
     });
   }
@@ -39,6 +58,31 @@ class IDBManager {
       if(!db) return;
       const tx = db.transaction(storeName);
       return tx.objectStore(storeName).getAll();
+    });
+  }
+  static sendOfflineReviews(){
+      return IDBManager.getTableFromIDB(IDBManager.ReviewsToSendStore)
+      .then(reviews => {
+        return Promise.all(reviews.map(review =>{
+          console.log(`posting review with local_id ${review.local_id}`);
+          return fetch(
+            'http://localhost:1337/reviews',
+            {
+              method:'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(review)
+            }).then(res => {
+              if(res.ok){
+                console.log(`Review with local_id ${review.local_id} succesfully posted!!!`);
+                return IDBManager.deleteFromStore(IDBManager.ReviewsToSendStore, review.local_id);
+              }
+            })
+            .catch(err => {
+              console.error(`Something went wrong when trying to post the review with local_id ${review.local_id}`, err);
+            });
+        }));
     });
   }
   static getValueOnIndex(indexName, storeName, selector){
@@ -56,6 +100,19 @@ class IDBManager {
       .objectStore(storeName)
       .delete(item);
     });
+  }
+  static processTable(storeName, callback){
+    return DBPromise.then(db => {
+      if(!db) return;
+      return db.transaction(storeName, 'readwrite')
+      .objectStore(storeName)
+      .openCursor();
+     })
+     .then(function oneByOne(c) {
+       if(!c) return;
+       callback(c.value);
+       return c.continue().then(oneByOne);
+     });
   }
 }
 

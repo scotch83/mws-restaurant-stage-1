@@ -21,11 +21,18 @@ class DBHelper {
       .then(json => {
         json.map(restaurant => {
           if(restaurant.photograph) restaurant.photograph = `${restaurant.photograph}.jpg`;
+          IDBManager.putInIDBStore(IDBManager.RestaurantsStore, restaurant);
         });
         callback(null, json);
       })
       .catch(err => {
         console.error(`Request failed. Returned status of ${err.status}`);
+        IDBManager
+          .getTableFromIDB(IDBManager.RestaurantsStore)
+          .then(restos => {
+            if(callback)
+              callback(null, restos);
+          });
       });
   }
 
@@ -167,11 +174,31 @@ class DBHelper {
       marker.addTo(map);
     return marker;
   }
+  static fetchAndStoreAllReviews(){
+    fetch(`${DBHelper.DATABASE_URL}/reviews`)
+    .then(res => res.json())
+    .then(json => IDBManager.putInIDBStore(IDBManager.ReviewsStore,json))
+    .catch(err => console.error(err));
+  }
   static fetchReviewsById(restaurantId, callback){
     fetch(`${DBHelper.DATABASE_URL}/reviews/?restaurant_id=${restaurantId}`)
     .then(res => res.json())
-    .then(json => callback(json))
-    .catch(err => console.error(err));
+    .then(json => {
+      IDBManager.putInIDBStore(IDBManager.ReviewsStore,json);
+      if(callback)
+        callback(json);
+    })
+    .catch(err => {
+      console.error(err);
+      IDBManager.getValueOnIndex(IDBManager.RestaurantIdOnReviewIndex,IDBManager.ReviewsStore,restaurantId)
+      .then(res => {
+        IDBManager.getValueOnIndex(IDBManager.RestaurantIdOnReviewIndex,IDBManager.ReviewsToSendStore,restaurantId)
+        .then(toSend => {
+          if(callback)
+            callback([...res,...toSend]);
+        });
+      });
+    });
   }
   static postReview(review, callback){
     fetch(
@@ -185,10 +212,25 @@ class DBHelper {
       })
       .then(res => res.json())
       .then(json => {
-        if(callback)
-          callback(json);
+        IDBManager
+        .putInIDBStore(IDBManager.ReviewsStore, json)
+        .then(() => {
+          if(callback)
+            callback(json);
+        });
       })
-      .catch(err => console.error(err));
+      .catch(err =>
+      {
+        console.error(err);
+        review['createdAt'] = Date.now();
+        review['updatedAt'] = Date.now();
+        IDBManager
+        .putInIDBStore(IDBManager.ReviewsToSendStore, review)
+        .then(() => {
+          if(callback)
+          callback(review);
+        });
+      });
   }
   /* static mapMarkerForRestaurant(restaurant, map) {
     const marker = new google.maps.Marker({
