@@ -13,6 +13,9 @@ const toBeCached = [
   'js/dbhelper.js',
   'js/service-worker-loader.js',
   'leaflet/leaflet.css',
+  'https://use.fontawesome.com/releases/v5.2.0/webfonts/fa-solid-900.woff2',
+  'https://use.fontawesome.com/releases/v5.2.0/webfonts/fa-solid-900.woff',
+  'https://use.fontawesome.com/releases/v5.2.0/webfonts/fa-solid-900.ttf',
   'https://use.fontawesome.com/releases/v5.2.0/css/all.css',
   'leaflet/leaflet.js'
 ];
@@ -29,6 +32,10 @@ self.addEventListener('fetch', (event) => {
       return;
     }
     event.respondWith(serveFromCache(requestUrl.pathname));
+    return;
+  }
+  if(requestUrl.origin.indexOf('use.fontawesome.com') !== -1) {
+    event.respondWith(serveFromCache(event.request));
     return;
   }
   event.respondWith(handleRemoteFetching(event.request));
