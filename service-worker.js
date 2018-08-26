@@ -1,6 +1,5 @@
 'use strict';
-
-const cacheVersion = 'v4';
+const cacheVersion = 'v5';
 const staticCacheName = `resto-rev-cache-${cacheVersion}`;
 const imagesCache = `resto-rev-cache-images-${cacheVersion}`;
 const imageRegex = new RegExp(/(.*)(\/)(.*)\.(jpg|png|gif)$/);
@@ -30,11 +29,34 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(serveFromCache(requestUrl.pathname));
     return;
   }
-  event.respondWith(
-    caches.match(event.request).then(res => {
-      return res || fetch(event.request);
+  if (requestUrl.pathname.endsWith('reviews') && event.request.method === 'POST') {
+    event.respondWith(fetch(event.request.clone)
+      .then(res => res)
+      .catch(err => {
+        return event.request.clone()
+        .then(res => res.text())
+        .then(review => {
+          console.log('Could not send review, falling back on local db');
+          if(!review.createdAt){
+            review['createdAt'] = Date.now();
+            review['updatedAt'] = Date.now();
+          }
+          console.log(IDBManager);
+          IDBManager.putInIDBStore(IDBManager.ReviewsToSendStore, review);
+      });
     }));
+  } else event.respondWith(handleRemoteFetching(event.request));
 });
+function handleRemoteFetching(request){
+  return caches.match(request).then(res => {
+    return res || fetch(request);
+  })
+  .catch(err => console.error(err));
+}
+function handleFetchedResponses(json, request){
+  console.log(request);
+  return json;
+}
 function serveFromCache(key) {
   return caches.open(staticCacheName).then(cache => {
     return cache.match(key).then(res => res || fetch(key).then(fetched => {
@@ -59,6 +81,7 @@ function serveImg(request) {
   });
 }
 self.addEventListener('install', function(e) {
+  self.importScripts('./js/libs/idb-promised.js', './js/idb-manager.js');
   e.waitUntil(
     caches.open(staticCacheName).then(cache => cache.addAll(toBeCached)));
 });
@@ -68,7 +91,6 @@ self.addEventListener('message', function(event) {
 });
 
 self.addEventListener('activate', function (event) {
-
   event.waitUntil(caches.keys()
     .then(cachesKeys =>
       Promise.all(cachesKeys.filter((name) => name.startsWith('resto-') && !name.endsWith(cacheVersion))
