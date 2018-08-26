@@ -133,8 +133,21 @@ class DBHelper {
       }
     )
     .then(res => res.json())
-    .then(json => callback(json))
-    .catch(err => console.error(err));
+    .then(json => {
+      IDBManager.putInIDBStore(IDBManager.RestaurantsStore, json);
+      if(callback)
+        callback(json);
+    })
+    .catch(err => {
+      IDBManager.putInIDBStore(IDBManager.FavoritesUpdate, {
+        restaurant_id: restaurant.id,
+        is_favorite: restaurant.is_favorite
+      }).then(() => {
+        if(callback)
+          callback(restaurant);
+      });
+      console.error(err);
+    });
   }
   /**
    * Fetch all cuisines with proper error handling.
