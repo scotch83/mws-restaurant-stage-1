@@ -1,5 +1,5 @@
 'use strict';
-const cacheVersion = 'v5';
+const cacheVersion = 'v6';
 const staticCacheName = `resto-rev-cache-${cacheVersion}`;
 const imagesCache = `resto-rev-cache-images-${cacheVersion}`;
 const imageRegex = new RegExp(/(.*)(\/)(.*)\.(jpg|png|gif)$/);
